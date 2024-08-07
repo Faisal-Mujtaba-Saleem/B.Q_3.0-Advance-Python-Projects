@@ -89,7 +89,8 @@ date_now = date.strftime("%m/%d/%Y")
 print(f'datetime, {date_now}')
 for appointment in fetchAppointments:
     if appointment['dateOfAppointment'] <= date_now and appointment['status'] == "Registered":
-        subject = "Hospital Appointment"
+        subject = f"Appointment Confirmation for {
+            appointment['dateOfAppointment']}"
         message = f"""Assalamualaikum {appointment['patientsName']},
 
 We have received your registration for the appointment on {appointment['dateOfAppointment']}. We are pleased to inform you that your appointment has been confirmed. We are looking forward to seeing you on the scheduled date and time.
@@ -108,7 +109,7 @@ Hospital Administration.
         mail(appointment['email'], subject, message)
 
     elif appointment['dateOfAppointment'] == date_now and appointment['status'] == "Registered":
-        subject = "Hospital Appointment"
+        subject = "Your Appointment on {appointment['dateOfAppointment']}"
         message = f"""Assalamualaikum {appointment['patientsName']},
 
 We have received your registration for the appointment on {appointment['dateOfAppointment']}. We are pleased to inform you that your appointment date has been arrived. However, It seems that you have not visited us yet on the scheduled date and time.
