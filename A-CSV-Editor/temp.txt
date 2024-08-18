@@ -1,0 +1,212 @@
+[
+    ("load <filename>", "Load a CSV file."),
+    ("save [filename]", "Save the current CSV data to a file. If no filename is provided, it saves to the current file."),
+    ("add row <values>", "Add a new row with the specified values."),
+    ("drop row <index>", "Drop a row at the specified index."),
+    ("edit row <index> <column_name> <new_value>",
+     "Edit a specific row and column with a new value."),
+    ("add column <column_name> [values]",
+     "Add a new column with the specified name and optional values."),
+    ("drop column <column_name>", "Drop a column with the specified name."),
+    ("edit column <column_name> <row_index> <new_value>",
+     "Edit a specific cell in a column."),
+    ("get row <index>", "Get the data for a specific row."),
+    ("set row <index> <new_row>", "Set a new row at the specified index."),
+    ("get column <column_name>", "Get the data for a specific column."),
+    ("set column <column_name> <new_column>",
+     "Set a new column with the specified name."),
+    ("switch", "Switch to typing.")
+    ("exit", "Exit the CSV editor.")
+]
+
+
+elif user_sub_cmd == "save csv":
+    # Code to save the current CSV data to a file
+
+    csv_filename_path_toSave = micInput(
+        f"Enter the filename/path where you want to save your data else this will be save in the same csv_file, {csv_.csv_file_path}")
+
+    if csv_filename_path_toSave == '':
+        csv_.save_csv()
+    else:
+        csv_.save_csv(csv_filename_path_toSave)
+
+    operations_on_csv(csv_)
+
+
+if isinstance(no_of_rows_to_add, int):
+    if no_of_rows_to_add == 1:
+        values_to_add = micInput(
+            'Say the value/s you want to set in the row you are adding - or - say continue if you want to keep the row empty')
+        if values_to_add != 'continue' or values_to_add != '':
+            row_added = self.csv_.add_row(values_to_add)
+        else:
+            row_added = self.csv_.add_row()
+
+        print(f'\n{self.csv_.get_row(row_added)}\n')
+        self.save_changes(self.csv_)
+    else:
+        for no_of_row in range(no_of_rows_to_add):
+            row_added = self.csv_.add_row()
+
+            speak(f'Row.{no_of_row+1} added successfully!')
+            print(f'\n{self.csv_.get_row(row_added)}\n')
+
+            values_to_add = micInput(
+                f'Say the value/s you want to set in the row.{no_of_row+1} you added - or - say continue if you want to keep the row empty')
+
+            if values_to_add != 'continue' or values_to_add != '':
+                values_to_add = values_to_add.split(' ')
+                self.csv_.set_row(row_added, values_to_add)
+
+                speak(
+                    "The values you provided have been successfully added to the row...")
+                print(f'\n{self.csv_.get_row(row_added)}\n')
+
+        self.save_changes(self.csv_)
+
+
+if spoken_text == 'switch':
+    speak('Enter:')
+    return input()
+
+
+# def continue_or_exit(programme, args=None):
+#     speak('Did you want to continue the programme or exit?')
+#     isContinue = micInput(
+#         'Say continue to continue the programme or say any word to exit')
+#     if isContinue == 'continue':
+#         if args != None:
+#             programme(args)
+#         else:
+#             programme()
+
+#     else:
+#         sys.exit(1)
+
+
+CSV_EDITOR FILE:
+import pandas as pd
+
+
+class CSVEditor():
+    def __init__(self):
+        self._csv = pd.DataFrame()
+        self._csv_file_path = None
+
+    def load_csv(self, csv_file_path):
+        """Load an existing CSV file."""
+        self._csv = pd.read_csv(csv_file_path)
+        self._csv_file_path = csv_file_path
+
+    def save_csv(self, new_csv_file_path=None):
+        """Save the current _csv to a CSV file."""
+        if new_csv_file_path is None:
+            self._csv.to_csv(self._csv_file_path, index=False)
+        else:
+            self._csv.to_csv(new_csv_file_path, index=False)
+            self._csv_file_path = new_csv_file_path
+
+    def add_row(self, values=None):
+        """Add a new row to the CSV."""
+        newRow_index = len(self._csv)
+        self._csv.loc[newRow_index] = values
+        return newRow_index
+
+    def drop_row(self, row_index):
+        """Drop a row from the CSV."""
+        self._csv.drop(row_index, inplace=True)
+
+    def edit_row(self, new_value, row_index, *column_name):
+        """Edit a specific row in the CSV."""
+        if column_name:
+            self._csv.loc[row_index, [*column_name]] = new_value
+
+    def add_column(self, column_name=None):
+        """Add a new column to the CSV."""
+        if column_name is None:
+            column_name = f'column.{len(self._csv.columns)}'
+        self._csv[column_name] = None
+
+    def drop_column(self, column_name):
+        """Drop a column from the CSV."""
+        self._csv.drop(column_name, axis=1, inplace=True)
+
+    def edit_column(self, column_name, *row_index, new_value):
+        """Edit the values of a specific column in the CSV."""
+        self._csv.loc[[*row_index], column_name] = new_value
+
+    def get_csv(self):
+        """Get the entire CSV."""
+        return self._csv
+
+    def get_indices(self):
+        """Get the indices of the CSV."""
+        return self._csv.index
+
+    def get_cols(self):
+        """Get the columns of the CSV."""
+        return self._csv.columns
+
+    def get_row(self, row_index):
+        """Get a specific row from the CSV."""
+        return self._csv.iloc[[row_index]]
+
+    def set_row(self, row_index, new_row):
+        """Edit a specific row in the CSV."""
+        self._csv.iloc[row_index] = new_row
+
+    def get_column(self, column_name):
+        """Get a specific column from the CSV."""
+        return self._csv[column_name]
+
+    def set_column(self, column_name, new_column):
+        """Set a specific column in the CSV."""
+        self._csv[column_name] = new_column
+
+    def get_cell(self, row_index, column):
+        """Get a specific cell from the CSV."""
+        return self._csv.loc[row_index, column]
+
+    def set_cell(self, row_index, column, new_value):
+        """Set a specific cell in the CSV."""
+        self._csv.loc[row_index, column] = new_value
+        return self._csv.loc[row_index, column]
+
+    @property
+    def csv_file_path(self):
+        """Get the file path of the CSV."""
+        return self._csv_file_path
+
+    @csv_file_path.setter
+    def csv_file_path(self, new_file_path):
+        """Set the file path of the CSV."""
+        self._csv_file_path = new_file_path
+
+
+class CreateCSV(CSVEditor):
+    def __init__(self, csv_filename):
+        """Create a new CSV file with the given headers."""
+        super().__init__()
+
+        if '.csv' not in csv_filename:
+            csv_filename = csv_filename + '.csv'
+
+        self.save_csv(csv_filename)
+
+
+class EditCSV(CSVEditor):
+    def __init__(self, csv_file_path):
+        """Load an existing CSV file."""
+        super().__init__()
+
+        if '.csv' not in csv_file_path:
+            csv_file_path = csv_file_path + '.csv'
+
+        self.load_csv(csv_file_path)
+
+
+if __name__ == "__main__":
+    csv = EditCSV('students')
+    print(csv.get_csv())  # Display the loaded CSV
+    print(csv.get_cols())  # Display the column names
