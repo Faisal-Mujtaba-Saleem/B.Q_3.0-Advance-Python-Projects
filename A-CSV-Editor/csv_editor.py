@@ -64,7 +64,7 @@ class CSVEditor:
             column_name = f'column_{len(self._csv.columns)}'
         if column_name in self._csv.columns:
             raise ValueError(f"Column '{column_name}' already exists.")
-        self._csv[column_name] = default_value
+        self._csv.loc[0, column_name] = default_value
 
     def drop_column(self, column_name):
         """Drop a column from the CSV."""
@@ -72,14 +72,22 @@ class CSVEditor:
             raise ValueError(f"Column '{column_name}' does not exist.")
         self._csv.drop(column_name, axis=1, inplace=True)
 
-    def edit_column(self, column_name, new_values):
+    def edit_column(self, column_name, *row_index, new_values):
         """Edit the values of a specific column in the CSV."""
         if column_name not in self._csv.columns:
             raise ValueError(f"Column '{column_name}' does not exist.")
         if len(new_values) != len(self._csv):
             raise ValueError(f"Expected {len(self._csv)} values, got {
                              len(new_values)}.")
-        self._csv[column_name] = new_values
+        self._csv.loc[row_index, column_name] = new_values
+
+    def rename_column(self, old_name, new_name):
+        """Rename a column in the CSV."""
+        if old_name not in self._csv.columns:
+            raise ValueError(f"Column '{old_name}' does not exist.")
+        if new_name in self._csv.columns:
+            raise ValueError(f"Column '{new_name}' already exists.")
+        self._csv.rename(columns={old_name: new_name}, inplace=True)
 
     def get_csv(self):
         """Get the entire CSV."""

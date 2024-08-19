@@ -1,6 +1,7 @@
 from csv_editor import CSVEditor
 from communicator import speak, recognize_speech_from_microphone as micInput
 from utils import is_convertible_to_int, taking_setting_row_values_choice
+import os
 
 
 class CSV_Sub_Tasks:
@@ -16,9 +17,9 @@ class CSV_Sub_Tasks:
         print(df)
 
         doSave = micInput(
-            'Do you want to save the changes you made? Say "yes" to save the changes -or- " -or- "run sub csv tasks"" to go back?'
+            'Do you want to save the changes you made? Say "yes" to save the changes -or- "run sub csv tasks" to go back?'
         )
-        if doSave == ' -or- "run sub csv tasks"':
+        if doSave == "run sub csv tasks":
             self.runSubCsvTasks(self.csv_)
         elif doSave == 'yes':
             speak(
@@ -37,6 +38,9 @@ class CSV_Sub_Tasks:
                     csv_filename_path_toSave if csv_filename_path_toSave else self.csv_.csv_file_path}"
             )
 
+            os.system(f'''start "{
+                      csv_filename_path_toSave if csv_filename_path_toSave else self.csv_.csv_file_path}"''')
+
             self.runSubCsvTasks(self.csv_)
         else:
             speak("Your changes have not been saved. Any unsaved changes will be lost.")
@@ -47,7 +51,7 @@ class CSV_Sub_Tasks:
                 'Please provide the file path of the CSV you want to load -or- say "run sub csv tasks" to go back.')
             csv_file_path = input()
 
-            if csv_file_path == ' -or- "run sub csv tasks"':
+            if csv_file_path == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             elif csv_file_path:
                 self.csv_.load_csv(csv_file_path)
@@ -65,10 +69,10 @@ class CSV_Sub_Tasks:
     def addRow(self):
         try:
             speak(
-                'How many rows do you want to add -or- say " -or- "run sub csv tasks"" to go back?')
+                'How many rows do you want to add -or- say "run sub csv tasks"" to go back?')
             reply = input()
 
-            if reply == ' -or- "run sub csv tasks"':
+            if reply == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             else:
                 no_of_rows_to_add = int(reply)
@@ -166,10 +170,10 @@ class CSV_Sub_Tasks:
     def dropRow(self):
         try:
             speak(
-                'Which row number do you want to drop -or- say " -or- "run sub csv tasks"" to go back?')
+                'Which row number do you want to drop -or- say "run sub csv tasks"" to go back?')
             reply_to_drop = input()
 
-            if reply_to_drop == ' -or- "run sub csv tasks"':
+            if reply_to_drop == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             else:
                 row_to_drop = int(reply_to_drop)
@@ -191,10 +195,10 @@ class CSV_Sub_Tasks:
     def editRow(self):
         try:
             speak(
-                'Which row number do you want to edit -or- say " -or- "run sub csv tasks"" to go back?')
+                'Which row number do you want to edit -or- say "run sub csv tasks"" to go back?')
             reply = input()
 
-            if reply == ' -or- "run sub csv tasks"':
+            if reply == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             else:
                 row_to_edit = int(reply)
@@ -229,9 +233,9 @@ class CSV_Sub_Tasks:
     def addColumn(self):
         try:
             column_name = micInput(
-                'What is the name of the new column -or- say " -or- "run sub csv tasks"" to go back?')
+                'What is the name of the new column -or- say "run sub csv tasks"" to go back?')
 
-            if column_name == ' -or- "run sub csv tasks"':
+            if column_name == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             elif column_name:
                 self.csv_.add_column(column_name)
@@ -250,9 +254,9 @@ class CSV_Sub_Tasks:
     def dropColumn(self):
         try:
             column_to_drop = micInput(
-                'Which column do you want to drop -or- say " -or- say "run sub csv tasks"" to go back?')
+                'Which column do you want to drop -or- say "run sub csv tasks"" to go back?')
 
-            if column_to_drop == ' -or- "run sub csv tasks"':
+            if column_to_drop == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             elif column_to_drop in self.csv_.get_csv().columns:
                 self.csv_.drop_column(column_to_drop)
@@ -269,32 +273,72 @@ class CSV_Sub_Tasks:
             speak("An error occurred while dropping a column.")
             print(str(e))
 
+    def renameColumn(self):
+        try:
+            column_to_rename = micInput(
+                'Which column do you want to rename -or- say "run sub csv tasks"" to go back?')
+
+            if column_to_rename == "run sub csv tasks":
+                self.runSubCsvTasks(self.csv_)
+            elif column_to_rename in self.csv_.get_csv().columns:
+                new_column_name = micInput(
+                    'What is the new name of the column?')
+                self.csv_.rename_column(column_to_rename, new_column_name)
+                speak(f'Successfully renamed column \'{
+                      column_to_rename}\' to \'{new_column_name}\'')
+
+                self.save_changes()
+                self.renameColumn()
+            else:
+                speak(f'Column \'{column_to_rename}\' does not exist.')
+                raise ValueError(f'Invalid column name: {column_to_rename}')
+
+        except Exception as e:
+            speak("An error occurred while renaming a column.")
+            print(str(e))
+
     def editColumn(self):
         try:
             column_to_edit = micInput(
-                'Which column do you want to edit -or- say " -or- say "run sub csv tasks"" to go back?')
+                'Which column do you want to edit -or- say "run sub csv tasks"" to go back?')
 
-            if column_to_edit == ' -or- "run sub csv tasks"':
+            if column_to_edit == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             elif column_to_edit in self.csv_.get_csv().columns:
-                speak(f'Editing column \'{column_to_edit}\'')
-                for row_index in self.csv_.get_csv().index:
-                    value_to_set_in_row_of_col = micInput(
-                        f'Say the value for row {row_index}'
-                    )
-                    if is_convertible_to_int(value_to_set_in_row_of_col):
-                        value_to_set_in_row_of_col = int(
-                            value_to_set_in_row_of_col)
-                    self.csv_.edit_row(
-                        value_to_set_in_row_of_col, row_index, column_to_edit)
+                edit_choice = micInput(
+                    f'Do you want to edit the whole column "{column_to_edit}" at once or cell by cell? Say "whole" or "cell".')
 
-                speak(f'Successfully edited column \'{column_to_edit}\'')
+                if edit_choice.lower() == "whole":
+                    speak(f'Enter the new values for the whole column "{
+                          column_to_edit}", separated by commas.')
+                    new_column_values = input()
+
+                    new_column_values = [val.strip()
+                                         for val in new_column_values.split(',')]
+                    self.csv_.set_column(column_to_edit, new_column_values)
+
+                elif edit_choice.lower() == "cell":
+                    for row_index in self.csv_.get_csv().index:
+                        value_to_set_in_row_of_col = micInput(
+                            f'Say the value for row {row_index} in column "{column_to_edit}"')
+                        if is_convertible_to_int(value_to_set_in_row_of_col):
+                            value_to_set_in_row_of_col = int(
+                                value_to_set_in_row_of_col)
+                        self.csv_.set_cell(
+                            row_index, column_to_edit, value_to_set_in_row_of_col)
+
+                else:
+                    speak(f'Invalid choice. Please say "whole" or "cell".')
+                    raise ValueError(f'Invalid choice: {edit_choice}')
+
+                speak(f'Successfully edited column "{column_to_edit}"')
                 edited_col = self.csv_.get_column(column_to_edit)
                 print(edited_col)
                 self.save_changes()
                 self.editColumn()
+
             else:
-                speak(f'Column \'{column_to_edit}\' does not exist.')
+                speak(f'Column "{column_to_edit}" does not exist.')
                 raise ValueError(f'Invalid column name: {column_to_edit}')
 
         except Exception as e:
@@ -304,10 +348,10 @@ class CSV_Sub_Tasks:
     def getRow(self):
         try:
             speak(
-                'Which row number do you want to retrieve -or- say " -or- say "run sub csv tasks"" to go back?')
+                'Which row number do you want to retrieve -or- say "run sub csv tasks"" to go back?')
             reply = input()
 
-            if reply == ' -or- "run sub csv tasks"':
+            if reply == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             else:
                 row_to_get = int(reply)
@@ -330,7 +374,7 @@ class CSV_Sub_Tasks:
             column_to_get = micInput(
                 'Which column do you want to retrieve -or- say ""run sub csv tasks"" to go back?')
 
-            if column_to_get == ' -or- "run sub csv tasks"':
+            if column_to_get == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             elif column_to_get in self.csv_.get_csv().columns:
                 column_data = self.csv_.get_column(column_to_get)
