@@ -1,3 +1,5 @@
+CSV Sub CMDS:
+
 [
     ("load <filename>", "Load a CSV file."),
     ("save [filename]", "Save the current CSV data to a file. If no filename is provided, it saves to the current file."),
@@ -20,6 +22,8 @@
 ]
 
 
+Save CSV Functionality:
+
 elif user_sub_cmd == "save csv":
     # Code to save the current CSV data to a file
 
@@ -33,6 +37,8 @@ elif user_sub_cmd == "save csv":
 
     operations_on_csv(csv_)
 
+
+Setting Row Values Functionality:
 
 if isinstance(no_of_rows_to_add, int):
     if no_of_rows_to_add == 1:
@@ -66,10 +72,14 @@ if isinstance(no_of_rows_to_add, int):
         self.save_changes(self.csv_)
 
 
+Functionality to Switch to Typing-Mode:
+
 if spoken_text == 'switch':
     speak('Enter:')
     return input()
 
+
+Taking Prompt From the User, If He Want To Continue the Programme -or- He Want To Exit:
 
 # def continue_or_exit(programme, args=None):
 #     speak('Did you want to continue the programme or exit?')
@@ -85,7 +95,9 @@ if spoken_text == 'switch':
 #         sys.exit(1)
 
 
+
 CSV_EDITOR FILE:
+
 import pandas as pd
 
 

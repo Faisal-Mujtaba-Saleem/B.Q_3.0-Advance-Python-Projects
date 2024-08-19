@@ -42,45 +42,46 @@ def runSubCsvTasks(csv_: CSVEditor):
         sub_commands_only = seperate_commands(sub_commands)
 
         if user_sub_cmd in sub_commands_only:
-            if user_sub_cmd != 'exit':
+            # if user_sub_cmd != 'exit':
 
-                if user_sub_cmd == "load csv":
-                    # Code to load the current CSV data to a file
-                    csv_sub_tasks.load_csv()
-                    runSubCsvTasks(csv_)
-                elif user_sub_cmd == "add row":
-                    # Code to add a new row with specified values
-                    csv_sub_tasks.addRow()
+            if user_sub_cmd == "load csv":
+                # Code to load the current CSV data to a file
+                csv_sub_tasks.load_csv()
+                runSubCsvTasks(csv_)
+            elif user_sub_cmd == "add row":
+                # Code to add a new row with specified values
+                csv_sub_tasks.addRow()
 
-                elif user_sub_cmd == "drop row":
-                    # Code to drop a row at the specified index
-                    csv_sub_tasks.dropRow()
-                elif user_sub_cmd == "edit row":
-                    # Code to edit a specific row and column with a new value
-                    csv_sub_tasks.editRow()
-                elif user_sub_cmd == "add column":
-                    # Code to add a new column with the specified name and optional values
-                    csv_sub_tasks.addColumn()
-                elif user_sub_cmd == "drop column":
-                    # Code to drop a column with the specified name
-                    csv_sub_tasks.dropColumn()
-                elif user_sub_cmd == "edit column":
-                    # Code to edit a specific cell in a column
-                    csv_sub_tasks.editColumn()
-                elif user_sub_cmd == "get row":
-                    # Code to get the data for a specific row
-                    csv_sub_tasks.getRow()
-                elif user_sub_cmd == "set row":
-                    # Code to set a new row at the specified index
-                    csv_sub_tasks.setRow()
-                elif user_sub_cmd == "get column":
-                    # Code to get the data for a specific column
-                    csv_sub_tasks.getColumn()
-                elif user_sub_cmd == "set column":
-                    # Code to set a new column with the specified name
-                    csv_sub_tasks.setColumn()
-            else:
-                speak('"Program exited successfully. See you next time!"')
+            elif user_sub_cmd == "drop row":
+                # Code to drop a row at the specified index
+                csv_sub_tasks.dropRow()
+            elif user_sub_cmd == "edit row":
+                # Code to edit a specific row and column with a new value
+                csv_sub_tasks.editRow()
+            elif user_sub_cmd == "add column":
+                # Code to add a new column with the specified name and optional values
+                csv_sub_tasks.addColumn()
+            elif user_sub_cmd == "drop column":
+                # Code to drop a column with the specified name
+                csv_sub_tasks.dropColumn()
+            elif user_sub_cmd == "edit column":
+                # Code to edit a specific cell in a column
+                csv_sub_tasks.editColumn()
+            elif user_sub_cmd == "get row":
+                # Code to get the data for a specific row
+                csv_sub_tasks.getRow()
+            elif user_sub_cmd == "set row":
+                # Code to set a new row at the specified index
+                csv_sub_tasks.setRow()
+            elif user_sub_cmd == "get column":
+                # Code to get the data for a specific column
+                csv_sub_tasks.getColumn()
+            elif user_sub_cmd == "set column":
+                # Code to set a new column with the specified name
+                csv_sub_tasks.setColumn()
+            # else:
+            #     speak('"Program exited successfully. See you next time!"')
+            #     sys.exit(0)
         else:
             speak(
                 "Command not recognized. Please say a valid command from the list.")
@@ -92,27 +93,27 @@ def runSubCsvTasks(csv_: CSVEditor):
 
 def runMainCsvTasks(user_cmd):
     try:
-        if user_cmd != 'exit':
-            if user_cmd == "create csv":
-                # Code to create a CSV file
-                csv_filename_path = micInput(
-                    'Please say the name of the csv you want to create or type its path')
+        # if user_cmd != 'exit':
+        if user_cmd == "create csv":
+            # Code to create a CSV file
+            csv_filename_path = micInput(
+                'Please say the name of the csv you want to create or type its path')
 
-                csv_ = CreateCSV(csv_filename_path)
-                csv_.add_column()
-                csv_.save_csv()
-                runSubCsvTasks(csv_)
-            elif user_cmd == "edit csv":
-                # Code to edit a CSV file
-                csv_filename_path = micInput(
-                    'Please say the name of the csv you want to edit or type its path')
+            csv_ = CreateCSV(csv_filename_path)
+            csv_.add_column()
+            csv_.save_csv()
+            runSubCsvTasks(csv_)
+        elif user_cmd == "edit csv":
+            # Code to edit a CSV file
+            csv_filename_path = micInput(
+                'Please say the name of the csv you want to edit or type its path')
 
-                csv_ = EditCSV(csv_filename_path)
-                runSubCsvTasks(csv_)
+            csv_ = EditCSV(csv_filename_path)
+            runSubCsvTasks(csv_)
 
-        else:
-            speak('"Program exited successfully. See you next time!"')
-            sys.exit(0)
+        # else:
+        #     speak('"Program exited successfully. See you next time!"')
+        #     sys.exit(0)
 
     except Exception as e:
         speak(str(e))
@@ -146,4 +147,5 @@ def main():
         main()
 
 
-main()
+if __name__ == "__main__":
+    main()

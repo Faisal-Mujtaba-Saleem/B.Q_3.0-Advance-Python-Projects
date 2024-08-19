@@ -1,6 +1,7 @@
 import win32com.client as client
 from pynput import keyboard
 import speech_recognition as sr
+import sys
 
 
 def speak(text, dots=True):
@@ -57,16 +58,31 @@ def recognize_speech_from_microphone(prompt_text):
             # Stop lisening
             keyboard_listner.stop()
 
+            # If user_typing is True, we will switch to typing mode.
+
             if user_typing == True:
                 user_typing = False
                 speak('Switched. Please enter')
-                return input()
+                user_input = input()
+
+                if user_input == 'exit':
+                    speak('Program exited successfully. See you next time!')
+                    sys.exit(0)
+
+                return user_input
+
+            # If user_typing is False, we will stay in speech-to-text mode.
 
             # Recognize speech using Google Web Speech API and convert it into the text.
             spoken_text = recognizer.recognize_google(audio)
             print(f'{spoken_text}')
 
+            if spoken_text == 'exit':
+                speak('Program exited successfully. See you next time!')
+                sys.exit(0)
+
             return spoken_text
+
         except Exception as e:
             speak(f'Sorry, I couldn\'t recognize your voice')
             if str(e) != '':
