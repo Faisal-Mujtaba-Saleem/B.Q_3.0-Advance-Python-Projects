@@ -305,35 +305,47 @@ class CSV_Sub_Tasks:
             if column_to_edit == "run sub csv tasks":
                 self.runSubCsvTasks(self.csv_)
             elif column_to_edit in self.csv_.get_csv().columns:
-                edit_choice = micInput(
-                    f'Do you want to edit the whole column "{column_to_edit}" at once or cell by cell? Say "whole" or "cell".')
+                if len(self.csv_.get_csv()[column_to_edit]) == 1:
 
-                if edit_choice.lower() == "whole":
-                    speak(f'Enter the new values for the whole column "{
-                          column_to_edit}", separated by commas.')
-                    new_column_values = input()
+                    value_to_set_in_col_of_row = micInput(
+                        f'Say the value for the column "{column_to_edit}"')
 
-                    new_column_values = [val.strip()
-                                         for val in new_column_values.split(',')]
-                    self.csv_.set_column(column_to_edit, new_column_values)
+                    if is_convertible_to_int(value_to_set_in_col_of_row):
+                        value_to_set_in_col_of_row = int(
+                            value_to_set_in_col_of_row)
 
-                elif edit_choice.lower() == "cell":
-                    for row_index in self.csv_.get_csv().index:
-                        value_to_set_in_row_of_col = micInput(
-                            f'Say the value for row {row_index} in column "{column_to_edit}"')
-                        if is_convertible_to_int(value_to_set_in_row_of_col):
-                            value_to_set_in_row_of_col = int(
-                                value_to_set_in_row_of_col)
-                        self.csv_.set_cell(
-                            row_index, column_to_edit, value_to_set_in_row_of_col)
-
+                    self.csv_.set_cell(
+                        0, column_to_edit, value_to_set_in_col_of_row
+                    )
                 else:
-                    speak(f'Invalid choice. Please say "whole" or "cell".')
-                    raise ValueError(f'Invalid choice: {edit_choice}')
+                    edit_choice = micInput(
+                        f'Do you want to edit the whole column "{column_to_edit}" at once or cell by cell? Say "whole" or "cell".')
 
-                speak(f'Successfully edited column "{column_to_edit}"')
-                edited_col = self.csv_.get_column(column_to_edit)
-                print(edited_col)
+                    if edit_choice.lower() == "whole":
+                        speak(f'Enter the new values for the whole column "{
+                            column_to_edit}", separated by commas.')
+                        new_column_values = input()
+
+                        new_column_values = [val.strip()
+                                             for val in new_column_values.split(',')]
+                        self.csv_.set_column(column_to_edit, new_column_values)
+
+                    elif edit_choice.lower() == "cell":
+                        for row_index in self.csv_.get_csv().index:
+                            value_to_set_in_row_of_col = micInput(
+                                f'Say the value for row {row_index} in column "{column_to_edit}"')
+                            if is_convertible_to_int(value_to_set_in_row_of_col):
+                                value_to_set_in_row_of_col = int(
+                                    value_to_set_in_row_of_col)
+                            self.csv_.set_cell(
+                                row_index, column_to_edit, value_to_set_in_row_of_col)
+
+                    else:
+                        speak(f'Invalid choice. Please say "whole" or "cell".')
+                        raise ValueError(f'Invalid choice: {edit_choice}')
+
+                    speak(f'Successfully edited column "{column_to_edit}"')
+
                 self.save_changes()
                 self.editColumn()
 
